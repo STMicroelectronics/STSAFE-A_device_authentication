@@ -1,0 +1,6 @@
+[submodule "Middleware/STSELib"]
+	path = Middleware/STSELib
+	url = git@github.com:STMicroelectronics/STSELib.git
+[submodule "Middleware/mbedtls"]
+	path = Middleware/mbedtls
+	url = git@github.com:Mbed-TLS/mbedtls.git
