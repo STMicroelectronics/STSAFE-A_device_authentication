@@ -26,5 +26,6 @@ inline_umlgraph_cache_all.pu
 !.vscode/unit_test.code-snippets
 
 # Miscellaneous
-Application/STSE_Test_project/STM32L452/EasyTest/
+Middleware/STM32_Cryptographic/
+!Middleware/STM32_Cryptographic/ReadMe.md
 *.cfg
