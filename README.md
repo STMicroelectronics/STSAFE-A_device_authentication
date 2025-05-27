@@ -8,18 +8,20 @@ When loaded on the target MCU platform , the project performes an STSAFE-A authe
 sequenceDiagram
     box Authenticator
     participant AUTH as Host MCU <br> (CA certificate)
-    end 
+    end
     box Accessory
     participant STSE as STSAFE-A <br> (Leaf-certificate + Priv_key)
-    end 
+    end
+    activate AUTH
     AUTH ->>+ STSE : Get Certificate <br>(read User-NVM zone 0)
     STSE -->>- AUTH : Accessory leaf-certificate
     note over AUTH : Verify certificate <br> using public key <br>from CA certificate
     note over AUTH : Generate Challenge <br> (TRNG)
     AUTH ->>+ STSE : ECDSA_Sign(Challenge)
-    note over STSE : Generate signature <br> using Priv_ke <br> (ECDSA sign) 
-    STSE -->>- AUTH : signature 
+    note over STSE : Generate signature <br> using Priv_ke <br> (ECDSA sign)
+    STSE -->>- AUTH : signature
     Note over AUTH : Verify signature <br> using public key <br>from CA certificate <br> (ECDSA verify)
+    deactivate AUTH
 ```
 
 The example applicative flowchart is illustrated below :
@@ -36,6 +38,7 @@ flowchart TD
     H --> I["Generate Challenge \n(Random Number)"]
     I --> J["Get Challenge signature from STSAFE-A "]
     J --> K["Verify signature using STSAFE-A pubkey"]
+    K --> L[endless loop]
 ```
 
 STSELib API used in the example are the following :
@@ -48,7 +51,7 @@ STSELib API used in the example are the following :
 - stse_certificate_is_parent
 - stse_ecc_generate_signature
 
-## Hardware and Software Prerequisites 
+## Hardware and Software Prerequisites
 
 - [NUCLEO-L452RE - STM32L452RE evaluation board](https://www.st.com/en/evaluation-tools/nucleo-l452re.html)
 
@@ -60,22 +63,22 @@ STSELib API used in the example are the following :
 
 ## Getting started with the project
 
-- Connect the [X-NUCLEO-ESE01A1](https://www.st.com/en/ecosystems/x-nucleo-ese01a1.html) expansion board on the top of the [NUCLEO-L452RE](https://www.st.com/en/evaluation-tools/nucleo-l452re.html) evaluation board. 
+- Connect the [X-NUCLEO-ESE01A1](https://www.st.com/en/ecosystems/x-nucleo-ese01a1.html) expansion board on the top of the [NUCLEO-L452RE](https://www.st.com/en/evaluation-tools/nucleo-l452re.html) evaluation board.
 
-![](./Documentation/resources/Pictures/NUCLEO_A120_eval_kit.png)
+![](./Pictures/X-NUCLEO_eval_kit.png)
 
 - Connect the board to the development computer and Open and configure a terminal software as follow (i.e. Teraterm).
 
-![](./Documentation/resources/Pictures//teraterm_config.png)
+![](./Pictures/teraterm_config.png)
 
-- Open the STM32CubeIDE projects located in Application/Projects/STM32CubeIDE
+- Open the STM32CubeIDE projects located in Application/STM32CubeIDE
 
 - Build the project by clicking the “**Build the active configurations of selected projects\ **” button and verify that no error is reported by the GCC compiler/Linker.
 
 - Launch a debug session then wait the debugger to stop on the first main routine instruction and press Start button to execute the main routine.
 
-> [!NOTE]  
-> - Jumper P7 (RST control) must be left open to communicate with the target STSAFE-A110.
+> [!NOTE]
+> - Power configuation Jumper must be set to 3V3-VCC.
 > - The COM port can differ from board to board. Please refer to windows device manager.
 
 <b>Result</b> :
@@ -84,7 +87,7 @@ This project reports execution log through the on-board STLINK CDC bridge.
 These logs can be analyzed on development computer using a serial terminal application (i.e.: Teraterm).
 As example below.
 
-```
+<pre>
 ----------------------------------------------------------------------------------------------------------------
 -                          STSAFE-A110 Multi-Steps Device Authentication Example                               -
 ----------------------------------------------------------------------------------------------------------------
@@ -161,4 +164,4 @@ As example below.
   0x05 0xC2 0xB1 0xC1 0x7B 0xD5 0x5C 0x19 0x72 0xEB 0x24 0xA7 0xD4 0x42 0xD1 0x72
 
 # ## Device Authenticated (Challenge signature verified successfully)
-```
+</pre>

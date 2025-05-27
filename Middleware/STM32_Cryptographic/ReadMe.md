@@ -14,7 +14,7 @@ Note : This directory must contain the following files and sub-directories:
 - legacy_v3/
 - lib/
 
-3 - Comment following lines from "cmox_low_level_template.c" file . (RCC CRC management already handled at project's system.c level) 
+3 - Comment following lines from "cmox_low_level_template.c" file . (RCC CRC management already handled at project's system.c level)
 
 ```
 /**
@@ -31,8 +31,3 @@ cmox_init_retval_t cmox_ll_init(void *pArg)
   return CMOX_INIT_SUCCESS;
 }
 ```
-
-
-
-
-
