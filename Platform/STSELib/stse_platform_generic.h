@@ -1,4 +1,4 @@
- /******************************************************************************
+/******************************************************************************
  * \file	stse_platform_generic.h
  * \brief   STSecureElement cryptographic platform file
  * \author  STMicroelectronics - CS application team
@@ -23,11 +23,10 @@
 extern "C" {
 #endif
 
-
 #include "stm32l4xx.h"
 #include <stddef.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 #define PLAT_UI8 uint8_t
 #define PLAT_UI16 uint16_t

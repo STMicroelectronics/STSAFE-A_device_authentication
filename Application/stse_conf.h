@@ -1,4 +1,4 @@
- /******************************************************************************
+/******************************************************************************
  * \file	stse_conf.h
  * \brief   STSecureElement library configuration file
  * \author  STMicroelectronics - CS application team
@@ -14,7 +14,6 @@
  *
  ******************************************************************************
  */
-
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STSE_CONF_H
@@ -38,7 +37,7 @@ extern "C" {
 #ifdef STSE_CONF_STSAFE_A_SUPPORT
 
 /* STSAFE-A ECC services configuration */
- #define STSE_CONF_ECC_NIST_P_256
+#define STSE_CONF_ECC_NIST_P_256
 // #define STSE_CONF_ECC_NIST_P_384
 // #define STSE_CONF_ECC_NIST_P_521
 // #define STSE_CONF_ECC_BRAINPOOL_P_256
@@ -93,21 +92,18 @@ extern "C" {
 
 #endif /* STSE_CONF_STSAFE_L_SUPPORT */
 
-
 /*********************************************************
  *                COMMUNICATION SETTINGS
  *********************************************************/
 
 #define STSE_USE_RSP_POLLING
-#define STSE_MAX_POLLING_RETRY 			10
-#define STSE_FIRST_POLLING_INTERVAL		10
-#define STSE_POLLING_RETRY_INTERVAL		10
+#define STSE_MAX_POLLING_RETRY 10
+#define STSE_FIRST_POLLING_INTERVAL 10
+#define STSE_POLLING_RETRY_INTERVAL 10
 //#define STSE_FRAME_DEBUG_LOG
 
 #define STSAFE_I2C_STATIC
 //#define STSAFE_I2C_DYNAMIC
-
-
 
 #ifdef __cplusplus
 }

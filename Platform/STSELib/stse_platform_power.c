@@ -1,4 +1,4 @@
- /******************************************************************************
+/******************************************************************************
  * \file	stse_platform_power.c
  * \brief   STSecureElement power platform file
  * \author  STMicroelectronics - CS application team
@@ -15,55 +15,49 @@
  ******************************************************************************
  */
 
+#include "stm32l4xx.h"
 #include "stse_conf.h"
 #include "stselib.h"
-#include "stm32l4xx.h"
 
+stse_ReturnCode_t stse_platform_power_init(void) {
+    /* -Initialize power line control (PC0  - open-drain) */
+    GPIOC->MODER &= ~(GPIO_MODER_MODE0_Msk);
+    GPIOC->MODER |= (1 << GPIO_MODER_MODE0_Pos);
+    GPIOC->ODR &= ~(1 << GPIO_ODR_OD0_Pos);
 
-stse_ReturnCode_t stse_platform_power_init (void)
-{
-	/* -Initialize power line control (PC0  - open-drain) */
-	GPIOC->MODER 	&=  ~(GPIO_MODER_MODE0_Msk);
-	GPIOC->MODER 	|=  (1 << GPIO_MODER_MODE0_Pos);
-	GPIOC->ODR 	&=  ~(1 << GPIO_ODR_OD0_Pos);
+    /* -Initialize power line control (PC1  - open-drain) */
+    GPIOC->MODER &= ~(GPIO_MODER_MODE1_Msk);
+    GPIOC->MODER |= (1 << GPIO_MODER_MODE1_Pos);
+    GPIOC->ODR &= ~(1 << GPIO_ODR_OD1_Pos);
 
-	/* -Initialize power line control (PC1  - open-drain) */
-	GPIOC->MODER 	&=  ~(GPIO_MODER_MODE1_Msk);
-	GPIOC->MODER 	|=  (1 << GPIO_MODER_MODE1_Pos);
-	GPIOC->ODR 	&=  ~(1 << GPIO_ODR_OD1_Pos);
+    /* -Initialize power line control (PB0  - open-drain) */
+    GPIOB->MODER &= ~(GPIO_MODER_MODE0_Msk);
+    GPIOB->MODER |= (1 << GPIO_MODER_MODE0_Pos);
+    GPIOB->ODR &= ~(1 << GPIO_ODR_OD0_Pos);
 
-	/* -Initialize power line control (PB0  - open-drain) */
-	GPIOB->MODER 	&=  ~(GPIO_MODER_MODE0_Msk);
-	GPIOB->MODER 	|=  (1 << GPIO_MODER_MODE0_Pos);
-	GPIOB->ODR      &=  ~(1 << GPIO_ODR_OD0_Pos);
-
-	return STSE_OK;
+    return STSE_OK;
 }
 
+stse_ReturnCode_t stse_platform_power_on(PLAT_UI8 bus, PLAT_UI8 devAddr) {
+    (void)bus;
+    (void)devAddr;
 
-stse_ReturnCode_t stse_platform_power_on (PLAT_UI8 bus , PLAT_UI8 devAddr)
-{
-	(void)bus;
-	(void)devAddr;
+    /* - Power on all the STSAFE SLOTS */
+    GPIOB->ODR &= ~(1 << GPIO_ODR_OD0_Pos);
+    GPIOC->ODR &= ~(1 << GPIO_ODR_OD0_Pos);
+    GPIOC->ODR &= ~(1 << GPIO_ODR_OD1_Pos);
 
-	/* - Power on all the STSAFE SLOTS */
-	GPIOB->ODR &= ~(1 << GPIO_ODR_OD0_Pos);
-	GPIOC->ODR &= ~(1 << GPIO_ODR_OD0_Pos);
-	GPIOC->ODR &= ~(1 << GPIO_ODR_OD1_Pos);
-
-	return ( STSE_OK );
-
+    return (STSE_OK);
 }
 
-stse_ReturnCode_t stse_platform_power_off (PLAT_UI8 bus , PLAT_UI8 devAddr)
-{
-	(void)bus;
-	(void)devAddr;
+stse_ReturnCode_t stse_platform_power_off(PLAT_UI8 bus, PLAT_UI8 devAddr) {
+    (void)bus;
+    (void)devAddr;
 
-	/* - Power-off all the STSAFE SLOTS */
-	GPIOB->ODR |= (1 << GPIO_ODR_OD0_Pos);
-	GPIOC->ODR |= (1 << GPIO_ODR_OD0_Pos);
-	GPIOC->ODR |= (1 << GPIO_ODR_OD1_Pos);
+    /* - Power-off all the STSAFE SLOTS */
+    GPIOB->ODR |= (1 << GPIO_ODR_OD0_Pos);
+    GPIOC->ODR |= (1 << GPIO_ODR_OD0_Pos);
+    GPIOC->ODR |= (1 << GPIO_ODR_OD1_Pos);
 
-	return(STSE_OK);
+    return (STSE_OK);
 }

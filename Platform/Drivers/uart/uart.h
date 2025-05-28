@@ -1,4 +1,4 @@
- /******************************************************************************
+/******************************************************************************
  * \file	uart.h
  * \brief   UART driver for STM32L452
  * \author  STMicroelectronics - CS application team
@@ -20,7 +20,7 @@
 
 #include "stm32l4xx.h"
 
-void uart_init (uint32_t baudrate);
+void uart_init(uint32_t baudrate);
 void uart_putc(uint8_t c);
 uint8_t uart_getc(void);
 
