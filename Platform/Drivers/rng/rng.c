@@ -1,4 +1,4 @@
- /******************************************************************************
+/******************************************************************************
  * \file	rng.c
  * \brief   Random Number Generator driver for STM32L452
  * \author  STMicroelectronics - CS application team
@@ -17,18 +17,16 @@
 
 #include "Drivers/rng/rng.h"
 
-void rng_start (void)
-{
-	RNG->CR |= (RNG_CR_RNGEN | 1<<5 );
+void rng_start(void) {
+    RNG->CR |= (RNG_CR_RNGEN | 1 << 5);
 }
 
-uint32_t rng_generate_random_number(void)
-{
-	while (!(RNG->SR & RNG_SR_DRDY));
-	return RNG->DR;
+uint32_t rng_generate_random_number(void) {
+    while (!(RNG->SR & RNG_SR_DRDY))
+        ;
+    return RNG->DR;
 }
 
-void rng_stop (void)
-{
-	RNG->CR &= ~(RNG_CR_RNGEN);
+void rng_stop(void) {
+    RNG->CR &= ~(RNG_CR_RNGEN);
 }

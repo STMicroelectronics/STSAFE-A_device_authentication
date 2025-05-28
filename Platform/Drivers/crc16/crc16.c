@@ -1,4 +1,4 @@
- /******************************************************************************
+/******************************************************************************
  * \file	crc16.h
  * \brief   CRC16 driver for STM32L452
  * \author  STMicroelectronics - CS application team
@@ -20,46 +20,39 @@
 #ifdef CRC16_HW_IMP
 
 /* ---------------------- HW CRC16 Implementation --------------------- */
-void crc16_Init (void)
-{
-	/* - Configure CRC */
-	CRC->POL =  CRC16_POLY;
-	CRC->CR |=  (0b01 << CRC_CR_POLYSIZE_Pos)|(CRC16_REV_IN<<CRC_CR_REV_IN_Pos)|(CRC16_REV_OUT<<CRC_CR_REV_OUT_Pos);
-	CRC->INIT = CRC_INITVALUE ;
+void crc16_Init(void) {
+    /* - Configure CRC */
+    CRC->POL = CRC16_POLY;
+    CRC->CR |= (0b01 << CRC_CR_POLYSIZE_Pos) | (CRC16_REV_IN << CRC_CR_REV_IN_Pos) | (CRC16_REV_OUT << CRC_CR_REV_OUT_Pos);
+    CRC->INIT = CRC_INITVALUE;
 }
 
-uint16_t crc16_Calculate (uint8_t* address, uint16_t length)
-{
+uint16_t crc16_Calculate(uint8_t *address, uint16_t length) {
     volatile uint16_t i;
-    volatile uint16_t* p16_crc_dr_reg = (uint16_t *)&CRC->DR;
-    volatile uint8_t* p8_crc_dr_reg = (uint8_t *)&CRC->DR;
+    volatile uint16_t *p16_crc_dr_reg = (uint16_t *)&CRC->DR;
+    volatile uint8_t *p8_crc_dr_reg = (uint8_t *)&CRC->DR;
 
     CRC->CR |= CRC_CR_RESET;
-    for(i=0;i<length;i++)
-    {
-		*p8_crc_dr_reg = (uint8_t)*address;
-		address++;
+    for (i = 0; i < length; i++) {
+        *p8_crc_dr_reg = (uint8_t)*address;
+        address++;
     }
 
-    return ~(*p16_crc_dr_reg) ;
+    return ~(*p16_crc_dr_reg);
 }
 
-uint16_t crc16_Accumulate (uint8_t* address, uint16_t length)
-{
+uint16_t crc16_Accumulate(uint8_t *address, uint16_t length) {
     uint16_t i;
-    uint16_t* p16_crc_dr_reg = (uint16_t *)&CRC->DR;
-    uint8_t* p8_crc_dr_reg = (uint8_t *)&CRC->DR;
+    uint16_t *p16_crc_dr_reg = (uint16_t *)&CRC->DR;
+    uint8_t *p8_crc_dr_reg = (uint8_t *)&CRC->DR;
 
-    for(i=0;i<length;i++)
-    {
-		*p8_crc_dr_reg = (uint8_t)*address;
-		address++;
+    for (i = 0; i < length; i++) {
+        *p8_crc_dr_reg = (uint8_t)*address;
+        address++;
     }
 
-    return ~(*p16_crc_dr_reg) ;
-
+    return ~(*p16_crc_dr_reg);
 }
-
 
 #else
 
@@ -96,34 +89,30 @@ static uint16_t crc16_tab[] = {
     0xe70e, 0xf687, 0xc41c, 0xd595, 0xa12a, 0xb0a3, 0x8238, 0x93b1,
     0x6b46, 0x7acf, 0x4854, 0x59dd, 0x2d62, 0x3ceb, 0x0e70, 0x1ff9,
     0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330,
-    0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
-};
+    0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78};
 
 uint16_t crc16_val;
 
-void crc16_Init (void)
-{
-	//__NOP();
+void crc16_Init(void) {
+    //__NOP();
 }
 
-uint16_t crc16_Calculate (uint8_t* address, uint16_t length)
-{
-	uint16_t i = 0;
+uint16_t crc16_Calculate(uint8_t *address, uint16_t length) {
+    uint16_t i = 0;
     crc16_val = 0xffff;
 
-    for(i=0; i<length; i++) {
-    	crc16_val = ( (crc16_val >> 8) ^ crc16_tab [(crc16_val ^ address[i]) & 0x00ff]);
+    for (i = 0; i < length; i++) {
+        crc16_val = ((crc16_val >> 8) ^ crc16_tab[(crc16_val ^ address[i]) & 0x00ff]);
     }
 
     return ~crc16_val;
 }
 
-uint16_t crc16_Accumulate (uint8_t* address, uint16_t length)
-{
-	uint16_t i = 0;
+uint16_t crc16_Accumulate(uint8_t *address, uint16_t length) {
+    uint16_t i = 0;
 
-    for(i=0; i<length; i++) {
-    	crc16_val = ( (crc16_val >> 8) ^ crc16_tab [(crc16_val ^ address[i]) & 0x00ff]);
+    for (i = 0; i < length; i++) {
+        crc16_val = ((crc16_val >> 8) ^ crc16_tab[(crc16_val ^ address[i]) & 0x00ff]);
     }
 
     return ~crc16_val;

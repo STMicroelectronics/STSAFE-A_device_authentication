@@ -1,4 +1,4 @@
- /******************************************************************************
+/******************************************************************************
  * \file	delay_ms.h
  * \brief   Millisecond delay driver for STM32L452
  * \author  STMicroelectronics - CS application team

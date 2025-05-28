@@ -1,4 +1,4 @@
- /******************************************************************************
+/******************************************************************************
  * \file	stse_platform_crypto_init.c
  * \brief   STSecureElement cryptographic platform file
  * \author  STMicroelectronics - CS application team
@@ -15,23 +15,17 @@
  ******************************************************************************
  */
 
+#include "Middleware/STM32_Cryptographic/include/cmox_crypto.h"
 #include "stse_conf.h"
 #include "stselib.h"
-#include "Middleware/STM32_Cryptographic/include/cmox_crypto.h"
 
+stse_ReturnCode_t stse_platform_crypto_init(void) {
+    stse_ReturnCode_t ret = STSE_OK;
 
-stse_ReturnCode_t stse_platform_crypto_init (void)
-{
-	stse_ReturnCode_t ret = STSE_OK;
+    /* - Initialize STM32 CMOX library */
+    if (cmox_initialize(NULL) != CMOX_INIT_SUCCESS) {
+        ret = STSE_PLATFORM_CRYPTO_INIT_ERROR;
+    }
 
-	/* - Initialize STM32 CMOX library */
-	if (cmox_initialize(NULL) != CMOX_INIT_SUCCESS)
-	{
-		ret = STSE_PLATFORM_CRYPTO_INIT_ERROR;
-	}
-
-	return ret;
-
+    return ret;
 }
-
-
