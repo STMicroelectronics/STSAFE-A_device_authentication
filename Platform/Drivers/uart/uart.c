@@ -15,7 +15,7 @@
  ******************************************************************************
  */
 
-#include <Drivers/uart/uart.h>
+#include "Drivers/uart/uart.h"
 
 #ifdef STM32G0
 void uart_init(uint32_t baudrate) {

@@ -61,6 +61,10 @@ static cmox_hash_algo_t stse_platform_get_cmox_hash_algo(stse_hash_algorithm_t h
 stse_ReturnCode_t stse_platform_hash_compute(stse_hash_algorithm_t hash_algo,
                                              PLAT_UI8 *pPayload, PLAT_UI32 payload_length,
                                              PLAT_UI8 *pHash, PLAT_UI32 *hash_length) {
+#if defined(STSE_CONF_HASH_SHA_1) || defined(STSE_CONF_HASH_SHA_224) ||                                      \
+    defined(STSE_CONF_HASH_SHA_256) || defined(STSE_CONF_HASH_SHA_384) || defined(STSE_CONF_HASH_SHA_512) || \
+    defined(STSE_CONF_HASH_SHA_3_256) || defined(STSE_CONF_HASH_SHA_3_284) || defined(STSE_CONF_HASH_SHA_3_512)
+
     cmox_hash_retval_t retval;
 
     retval = cmox_hash_compute(
@@ -77,6 +81,11 @@ stse_ReturnCode_t stse_platform_hash_compute(stse_hash_algorithm_t hash_algo,
     }
 
     return STSE_OK;
+#else
+    return STSE_PLATFORM_HASH_ERROR;
+#endif /* STSE_CONF_HASH_SHA_1 || STSE_CONF_HASH_SHA_224 ||\
+          STSE_CONF_HASH_SHA_256 || STSE_CONF_HASH_SHA_384 || STSE_CONF_HASH_SHA_512 ||\
+          STSE_CONF_HASH_SHA_3_256 || STSE_CONF_HASH_SHA_3_284 || STSE_CONF_HASH_SHA_3_512 */
 }
 
 stse_ReturnCode_t stse_platform_hmac_sha256_extract(PLAT_UI8 *pSalt, PLAT_UI16 salt_length,

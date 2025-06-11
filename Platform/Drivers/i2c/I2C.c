@@ -105,7 +105,7 @@ int8_t i2c_write(I2C_TypeDef *pI2C, uint8_t slave_address, uint16_t speed, uint8
                     return -1;
                 }
             }
-            pI2C->TXDR = (uint8_t) * (pbuffer + (i + offset));
+            pI2C->TXDR = (uint8_t)*(pbuffer + (i + offset));
         }
         xfer_length = (xfer_length - xfer_size);
         if (xfer_length > 0) {

@@ -1,6 +1,7 @@
 # Build artifacts
 [Dd]ebug/
 [Rr]elease/
+.settings/
 *.exe
 *.bak
 *.prefs
@@ -17,6 +18,7 @@ __rtf/
 __docman
 __docbook
 *.chm
+*.xml
 inline_umlgraph_cache_all.pu
 
 # IDEs specific

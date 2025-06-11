@@ -145,6 +145,9 @@ stse_ReturnCode_t stse_platform_ecc_verify(
     PLAT_UI8 *pDigest,
     PLAT_UI16 digestLen,
     PLAT_UI8 *pSignature) {
+#if defined(STSE_CONF_ECC_NIST_P_256) || defined(STSE_CONF_ECC_NIST_P_384) || defined(STSE_CONF_ECC_NIST_P_521) ||                \
+    defined(STSE_CONF_ECC_BRAINPOOL_P_256) || defined(STSE_CONF_ECC_BRAINPOOL_P_384) || defined(STSE_CONF_ECC_BRAINPOOL_P_512) || \
+    defined(STSE_CONF_ECC_CURVE_25519) || defined(STSE_CONF_ECC_EDWARD_25519)
     cmox_ecc_retval_t retval;
     PLAT_UI32 faultCheck;
 
@@ -169,7 +172,7 @@ stse_ReturnCode_t stse_platform_ecc_verify(
                                    &faultCheck                                       /* Fault check variable */
         );
     } else
-#endif
+#endif /* STSE_CONF_ECC_EDWARD_25519 */
     {
         /* - Perform ECDSA verify */
         retval = cmox_ecdsa_verify(&Ecc_Ctx,                                         /* ECC context */
@@ -192,15 +195,12 @@ stse_ReturnCode_t stse_platform_ecc_verify(
     }
 
     return STSE_OK;
+#else
+    return STSE_PLATFORM_ECC_VERIFY_ERROR;
+#endif /* STSE_CONF_ECC_NIST_P_256 || STSE_CONF_ECC_NIST_P_384 || STSE_CONF_ECC_NIST_P_521 ||\
+          STSE_CONF_ECC_BRAINPOOL_P_256 || STSE_CONF_ECC_BRAINPOOL_P_384 || STSE_CONF_ECC_BRAINPOOL_P_512 ||\
+          STSE_CONF_ECC_CURVE_25519 || STSE_CONF_ECC_EDWARD_25519 */
 }
-
-#if defined(STSE_CONF_USE_HOST_KEY_ESTABLISHMENT) ||                      \
-    defined(STSE_CONF_USE_HOST_KEY_PROVISIONING_WRAPPED) ||               \
-    defined(STSE_CONF_USE_HOST_KEY_PROVISIONING_WRAPPED_AUTHENTICATED) || \
-    defined(STSE_CONF_USE_SYMMETRIC_KEY_ESTABLISHMENT) ||                 \
-    defined(STSE_CONF_USE_SYMMETRIC_KEY_ESTABLISHMENT_AUTHENTICATED) ||   \
-    defined(STSE_CONF_USE_SYMMETRIC_KEY_PROVISIONING_WRAPPED) ||          \
-    defined(STSE_CONF_USE_SYMMETRIC_KEY_PROVISIONING_WRAPPED_AUTHENTICATED)
 
 static size_t stse_platform_get_cmox_ecc_priv_key_len(stse_ecc_key_type_t key_type) {
     switch (key_type) {
@@ -257,6 +257,9 @@ stse_ReturnCode_t stse_platform_ecc_generate_key_pair(
     stse_ecc_key_type_t key_type,
     PLAT_UI8 *pPrivKey,
     PLAT_UI8 *pPubKey) {
+#if defined(STSE_CONF_ECC_NIST_P_256) || defined(STSE_CONF_ECC_NIST_P_384) || defined(STSE_CONF_ECC_NIST_P_521) ||                \
+    defined(STSE_CONF_ECC_BRAINPOOL_P_256) || defined(STSE_CONF_ECC_BRAINPOOL_P_384) || defined(STSE_CONF_ECC_BRAINPOOL_P_512) || \
+    defined(STSE_CONF_ECC_CURVE_25519) || defined(STSE_CONF_ECC_EDWARD_25519)
     cmox_ecc_retval_t retval;
 
     /*- Set ECC context */
@@ -273,7 +276,7 @@ stse_ReturnCode_t stse_platform_ecc_generate_key_pair(
     /* Add 32bytes to random length if the key is Curve25519 because it will use the Ed25519 key gen */
 #ifdef STSE_CONF_ECC_CURVE_25519
     randomLength += ((key_type == STSE_ECC_KT_CURVE25519) ? 32 : 0);
-#endif
+#endif /* STSE_CONF_ECC_CURVE_25519 */
     /* Retry loop in case the RNG isn't strong enough */
     do {
         /* - Generate a random number */
@@ -294,7 +297,7 @@ stse_ReturnCode_t stse_platform_ecc_generate_key_pair(
                                        pPubKey,                                   /* Public key */
                                        NULL);                                     /* Public key length */
         } else
-#endif
+#endif /* STSE_CONF_ECC_EDWARD_25519 */
 #ifdef STSE_CONF_ECC_CURVE_25519
             if (key_type == STSE_ECC_KT_CURVE25519) {
             memcpy(pPrivKey, static_c25519_priv_key, 32);
@@ -302,7 +305,7 @@ stse_ReturnCode_t stse_platform_ecc_generate_key_pair(
 
             retval = CMOX_ECC_SUCCESS;
         } else
-#endif
+#endif /* STSE_CONF_ECC_CURVE_25519 */
         {
             retval = cmox_ecdsa_keyGen(&Ecc_Ctx,                                  /* ECC context */
                                        stse_platform_get_cmox_ecc_impl(key_type), /* Curve param */
@@ -323,8 +326,12 @@ stse_ReturnCode_t stse_platform_ecc_generate_key_pair(
     }
 
     return STSE_OK;
+#else
+    return STSE_PLATFORM_ECC_GENERATE_KEY_PAIR_ERROR;
+#endif /* STSE_CONF_ECC_NIST_P_256 || STSE_CONF_ECC_NIST_P_384 || STSE_CONF_ECC_NIST_P_521 ||\
+          STSE_CONF_ECC_BRAINPOOL_P_256 || STSE_CONF_ECC_BRAINPOOL_P_384 || STSE_CONF_ECC_BRAINPOOL_P_512 ||\
+          STSE_CONF_ECC_CURVE_25519 || STSE_CONF_ECC_EDWARD_25519 */
 }
-#endif
 
 #if defined(STSE_CONF_USE_HOST_KEY_PROVISIONING_WRAPPED_AUTHENTICATED) || \
     defined(STSE_CONF_USE_SYMMETRIC_KEY_ESTABLISHMENT_AUTHENTICATED) ||   \
@@ -336,6 +343,9 @@ stse_ReturnCode_t stse_platform_ecc_sign(
     PLAT_UI8 *pDigest,
     PLAT_UI16 digestLen,
     PLAT_UI8 *pSignature) {
+#if defined(STSE_CONF_ECC_NIST_P_256) || defined(STSE_CONF_ECC_NIST_P_384) || defined(STSE_CONF_ECC_NIST_P_521) ||                \
+    defined(STSE_CONF_ECC_BRAINPOOL_P_256) || defined(STSE_CONF_ECC_BRAINPOOL_P_384) || defined(STSE_CONF_ECC_BRAINPOOL_P_512) || \
+    defined(STSE_CONF_ECC_CURVE_25519) || defined(STSE_CONF_ECC_EDWARD_25519)
     cmox_ecc_retval_t retval;
 
     /*- Set ECC context */
@@ -358,7 +368,7 @@ stse_ReturnCode_t stse_platform_ecc_sign(
                                  NULL                                               /* Signature length */
         );
     } else
-#endif
+#endif /* STSE_CONF_ECC_EDWARD_25519 */
     {
         do {
             /* - Generate a random number */
@@ -391,8 +401,14 @@ stse_ReturnCode_t stse_platform_ecc_sign(
     }
 
     return STSE_OK;
+#else
+    return STSE_PLATFORM_ECC_SIGN_ERROR;
+#endif /* STSE_CONF_ECC_NIST_P_256 || STSE_CONF_ECC_NIST_P_384 || STSE_CONF_ECC_NIST_P_521 ||\
+          STSE_CONF_ECC_BRAINPOOL_P_256 || STSE_CONF_ECC_BRAINPOOL_P_384 || STSE_CONF_ECC_BRAINPOOL_P_512 ||\
+          STSE_CONF_ECC_CURVE_25519 || STSE_CONF_ECC_EDWARD_25519 */
 }
-#endif
+#endif /* STSE_CONF_USE_HOST_KEY_PROVISIONING_WRAPPED_AUTHENTICATED || STSE_CONF_USE_SYMMETRIC_KEY_ESTABLISHMENT_AUTHENTICATED ||
+			STSE_CONF_USE_SYMMETRIC_KEY_PROVISIONING_WRAPPED_AUTHENTICATED */
 
 #if defined(STSE_CONF_USE_HOST_KEY_ESTABLISHMENT) ||                      \
     defined(STSE_CONF_USE_HOST_KEY_PROVISIONING_WRAPPED) ||               \
@@ -435,7 +451,10 @@ stse_ReturnCode_t stse_platform_ecc_ecdh(
 
     return STSE_OK;
 }
-#endif
+#endif /* STSE_CONF_USE_HOST_KEY_ESTABLISHMENT) || STSE_CONF_USE_HOST_KEY_PROVISIONING_WRAPPED) ||
+			STSE_CONF_USE_HOST_KEY_PROVISIONING_WRAPPED_AUTHENTICATED || STSE_CONF_USE_SYMMETRIC_KEY_ESTABLISHMENT) ||
+			STSE_CONF_USE_SYMMETRIC_KEY_ESTABLISHMENT_AUTHENTICATED || STSE_CONF_USE_SYMMETRIC_KEY_PROVISIONING_WRAPPED ||
+			STSE_CONF_USE_SYMMETRIC_KEY_PROVISIONING_WRAPPED_AUTHENTICATED */
 
 #if defined(STSE_CONF_USE_HOST_KEY_PROVISIONING_WRAPPED) ||               \
     defined(STSE_CONF_USE_HOST_KEY_PROVISIONING_WRAPPED_AUTHENTICATED) || \
@@ -463,4 +482,5 @@ stse_ReturnCode_t stse_platform_nist_kw_encrypt(PLAT_UI8 *pPayload, PLAT_UI32 pa
 
     return STSE_OK;
 }
-#endif
+#endif /* STSE_CONF_USE_HOST_KEY_PROVISIONING_WRAPPED || STSE_CONF_USE_HOST_KEY_PROVISIONING_WRAPPED_AUTHENTICATED ||
+			STSE_CONF_USE_SYMMETRIC_KEY_PROVISIONING_WRAPPED || STSE_CONF_USE_SYMMETRIC_KEY_PROVISIONING_WRAPPED_AUTHENTICATED */
