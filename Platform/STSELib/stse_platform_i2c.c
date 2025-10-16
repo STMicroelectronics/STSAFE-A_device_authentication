@@ -147,7 +147,7 @@ stse_ReturnCode_t stse_platform_i2c_receive_start(
     PLAT_UI16 speed,
     PLAT_UI16 frameLength) {
     (void)busID;
-    PLAT_I8 ret = 0;
+    PLAT_I8 ret = 1;
 
     /* - Store response Length */
     i2c_frame_size = frameLength;
@@ -189,7 +189,6 @@ stse_ReturnCode_t stse_platform_i2c_receive_continue(
     (void)speed;
 
     if (pData != NULL) {
-
         /* Check read overflow */
         if ((i2c_frame_size - i2c_frame_offset) < data_size) {
             return STSE_PLATFORM_BUFFER_ERR;
@@ -225,5 +224,5 @@ stse_ReturnCode_t stse_platform_i2c_receive_stop(
     /*- Free i2c buffer*/
     free(pI2c_buffer);
 #endif
-    return (ret);
+    return ret;
 }

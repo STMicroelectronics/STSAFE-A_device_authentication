@@ -66,11 +66,14 @@ stse_ReturnCode_t stse_platform_aes_cmac_append(PLAT_UI8 *pInput,
 
 stse_ReturnCode_t stse_platform_aes_cmac_compute_finish(PLAT_UI8 *pTag, PLAT_UI8 *pTagLen) {
     cmox_mac_retval_t retval;
+    size_t cmox_tag_len = *pTagLen;
 
-    retval = cmox_mac_generateTag(pMAC_Handler, pTag, (size_t *)pTagLen);
+    retval = cmox_mac_generateTag(pMAC_Handler, pTag, &cmox_tag_len);
     if (retval != CMOX_MAC_SUCCESS) {
         return STSE_PLATFORM_AES_CMAC_COMPUTE_ERROR;
     }
+
+    *pTagLen = (PLAT_UI8)cmox_tag_len;
 
     retval = cmox_mac_cleanup(pMAC_Handler);
     if (retval != CMOX_MAC_SUCCESS) {
@@ -106,6 +109,7 @@ stse_ReturnCode_t stse_platform_aes_cmac_compute(const PLAT_UI8 *pPayload,
                                                  PLAT_UI8 *pTag,
                                                  PLAT_UI16 *pTag_length) {
     cmox_mac_retval_t retval;
+    size_t cmox_tag_len = *pTag_length;
 
     retval = cmox_mac_compute(CMOX_CMAC_AESSMALL_ALGO, /* Use AES CMAC algorithm */
                               pPayload,                /* Message */
@@ -116,12 +120,14 @@ stse_ReturnCode_t stse_platform_aes_cmac_compute(const PLAT_UI8 *pPayload,
                               0,                       /* Custom Data length */
                               pTag,                    /* Tag */
                               exp_tag_size,            /* Expected Tag size */
-                              (size_t *)pTag_length    /* Generated Tag size */
+                              &cmox_tag_len            /* Generated Tag size */
     );
 
     if (retval != CMOX_MAC_SUCCESS) {
         return STSE_PLATFORM_AES_CMAC_VERIFY_ERROR;
     }
+
+    *pTag_length = (PLAT_UI16)cmox_tag_len;
 
     return STSE_OK;
 }
@@ -163,23 +169,26 @@ stse_ReturnCode_t stse_platform_aes_cbc_enc(const PLAT_UI8 *pPlaintext,
                                             PLAT_UI8 *pEncryptedtext,
                                             PLAT_UI16 *pEncryptedtext_length) {
     cmox_cipher_retval_t retval;
+    size_t cmox_encryptedtext_len = *pEncryptedtext_length;
 
     /*- Perform AES ECB Encryption */
-    retval = cmox_cipher_encrypt(CMOX_AESSMALL_CBC_ENC_ALGO,     /* Use AES CBC algorithm */
-                                 pPlaintext,                     /* Plain Text */
-                                 plaintext_length,               /* Plain Text length*/
-                                 pKey,                           /* AES Key */
-                                 key_length,                     /* AES Key length*/
-                                 pInitial_value,                 /* Initial Value */
-                                 16,                             /* Initial Value length */
-                                 pEncryptedtext,                 /* Ciphered Text */
-                                 (size_t *)pEncryptedtext_length /* Ciphered Text length*/
+    retval = cmox_cipher_encrypt(CMOX_AESSMALL_CBC_ENC_ALGO, /* Use AES CBC algorithm */
+                                 pPlaintext,                 /* Plain Text */
+                                 plaintext_length,           /* Plain Text length*/
+                                 pKey,                       /* AES Key */
+                                 key_length,                 /* AES Key length*/
+                                 pInitial_value,             /* Initial Value */
+                                 16,                         /* Initial Value length */
+                                 pEncryptedtext,             /* Ciphered Text */
+                                 &cmox_encryptedtext_len     /* Ciphered Text length*/
     );
 
     /*- Verify AES ECB Encryption status */
     if (retval != CMOX_CIPHER_SUCCESS) {
         return STSE_PLATFORM_AES_CBC_ENCRYPT_ERROR;
     }
+
+    *pEncryptedtext_length = (PLAT_UI16)cmox_encryptedtext_len;
 
     return STSE_OK;
 }
@@ -192,6 +201,7 @@ stse_ReturnCode_t stse_platform_aes_cbc_dec(const PLAT_UI8 *pEncryptedtext,
                                             PLAT_UI8 *pPlaintext,
                                             PLAT_UI16 *pPlaintext_length) {
     cmox_cipher_retval_t retval;
+    size_t cmox_plaintext_len = *pPlaintext_length;
 
     /*- Perform AES ECB decryption */
     retval = cmox_cipher_decrypt(CMOX_AESSMALL_CBC_DEC_ALGO, /* Use AES CBC algorithm */
@@ -202,13 +212,15 @@ stse_ReturnCode_t stse_platform_aes_cbc_dec(const PLAT_UI8 *pEncryptedtext,
                                  pInitial_value,             /* Initial Value */
                                  16,                         /* Initial Value length*/
                                  pPlaintext,                 /* Plain Text */
-                                 (size_t *)pPlaintext_length /* Plain Text length*/
+                                 &cmox_plaintext_len         /* Plain Text length*/
     );
 
     /*- Verify AES ECB decrypt return */
     if (retval != CMOX_CIPHER_SUCCESS) {
         return STSE_PLATFORM_AES_CBC_DECRYPT_ERROR;
     }
+
+    *pPlaintext_length = (PLAT_UI16)cmox_plaintext_len;
 
     return STSE_OK;
 }
@@ -221,23 +233,26 @@ stse_ReturnCode_t stse_platform_aes_ecb_enc(const PLAT_UI8 *pPlaintext,
                                             PLAT_UI16 *pEncryptedtext_length) {
     cmox_cipher_retval_t retval;
     PLAT_UI8 IV[16] = {0};
+    size_t cmox_encryptedtext_len = *pEncryptedtext_length;
 
     /*- Perform AES ECB Encryption */
-    retval = cmox_cipher_encrypt(CMOX_AESSMALL_ECB_ENC_ALGO,     /* Use AES ECB algorithm */
-                                 pPlaintext,                     /* Plain Text */
-                                 plaintext_length,               /* Plain Text length*/
-                                 pKey,                           /* AES Key */
-                                 key_length,                     /* AES Key length*/
-                                 IV,                             /* Initial Value */
-                                 16,                             /* Initial Value length */
-                                 pEncryptedtext,                 /* Ciphered Text */
-                                 (size_t *)pEncryptedtext_length /* Ciphered Text length*/
+    retval = cmox_cipher_encrypt(CMOX_AESSMALL_ECB_ENC_ALGO, /* Use AES ECB algorithm */
+                                 pPlaintext,                 /* Plain Text */
+                                 plaintext_length,           /* Plain Text length*/
+                                 pKey,                       /* AES Key */
+                                 key_length,                 /* AES Key length*/
+                                 IV,                         /* Initial Value */
+                                 16,                         /* Initial Value length */
+                                 pEncryptedtext,             /* Ciphered Text */
+                                 &cmox_encryptedtext_len     /* Ciphered Text length*/
     );
 
     /*- Verify AES ECB Encryption status */
     if (retval != CMOX_CIPHER_SUCCESS) {
         return STSE_PLATFORM_AES_ECB_ENCRYPT_ERROR;
     }
+
+    *pEncryptedtext_length = (PLAT_UI16)cmox_encryptedtext_len;
 
     return STSE_OK;
 }
@@ -250,6 +265,7 @@ stse_ReturnCode_t stse_platform_aes_ecb_dec(const PLAT_UI8 *pEncryptedtext,
                                             PLAT_UI16 *pPlaintext_length) {
     cmox_cipher_retval_t retval;
     PLAT_UI8 IV[16] = {0};
+    size_t cmox_plaintext_len = *pPlaintext_length;
 
     /*- Perform AES ECB decryption */
     retval = cmox_cipher_decrypt(CMOX_AESSMALL_ECB_DEC_ALGO, /* Use AES ECB algorithm */
@@ -260,13 +276,15 @@ stse_ReturnCode_t stse_platform_aes_ecb_dec(const PLAT_UI8 *pEncryptedtext,
                                  IV,                         /* Initial Value */
                                  16,                         /* Initial Value length*/
                                  pPlaintext,                 /* Plain Text */
-                                 (size_t *)pPlaintext_length /* Plain Text length*/
+                                 &cmox_plaintext_len         /* Plain Text length*/
     );
 
     /*- Verify AES ECB decrypt return */
     if (retval != CMOX_CIPHER_SUCCESS) {
         return STSE_PLATFORM_AES_ECB_DECRYPT_ERROR;
     }
+
+    *pPlaintext_length = (PLAT_UI16)cmox_plaintext_len;
 
     return STSE_OK;
 }

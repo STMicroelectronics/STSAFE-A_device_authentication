@@ -348,6 +348,10 @@ stse_ReturnCode_t stse_platform_ecc_sign(
     defined(STSE_CONF_ECC_CURVE_25519) || defined(STSE_CONF_ECC_EDWARD_25519)
     cmox_ecc_retval_t retval;
 
+    if (pPrivKey == NULL) {
+        return STSE_PLATFORM_INVALID_PARAMETER;
+    }
+
     /*- Set ECC context */
     cmox_ecc_construct(&Ecc_Ctx,                /* ECC context */
                        CMOX_MATH_FUNCS_SMALL,   /* Small math functions */
@@ -468,17 +472,20 @@ stse_ReturnCode_t stse_platform_nist_kw_encrypt(PLAT_UI8 *pPayload, PLAT_UI32 pa
                                                 PLAT_UI8 *pKey, PLAT_UI8 key_length,
                                                 PLAT_UI8 *pOutput, PLAT_UI32 *pOutput_length) {
     cmox_cipher_retval_t retval;
+    size_t cmox_output_length = *pOutput_length;
 
     retval = cmox_cipher_encrypt(
         CMOX_AESSMALL_KEYWRAP_ENC_ALGO,
         pPayload, payload_length,
         pKey, key_length,
         KEK_WRAP_IV, KEK_WRAP_IV_SIZE,
-        pOutput, (size_t *)pOutput_length);
+        pOutput, &cmox_output_length);
 
     if (retval != CMOX_CIPHER_SUCCESS) {
         return STSE_PLATFORM_KEYWRAP_ERROR;
     }
+
+    *pOutput_length = (PLAT_UI32)cmox_output_length;
 
     return STSE_OK;
 }
